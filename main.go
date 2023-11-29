@@ -21,6 +21,12 @@ func main() {
 }
 
 func home(writer http.ResponseWriter, request *http.Request) {
+
+	if request.URL.Path != "/" {
+		http.NotFound(writer, request)
+		return
+	}
+
 	writer.Write([]byte("Welcome to ShareCode"))
 }
 

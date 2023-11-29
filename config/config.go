@@ -1,6 +1,8 @@
 package config
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type Config struct {
 	Port    int

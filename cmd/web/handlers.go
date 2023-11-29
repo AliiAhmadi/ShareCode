@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -13,7 +15,21 @@ func home(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	writer.Write([]byte("Hello from ShareCode"))
+	ts, err := template.ParseFiles("./ui/html/home.page.tmpl")
+
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(writer, "Internal Server Error", 500)
+		return
+	}
+
+	err = ts.Execute(writer, nil)
+
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(writer, "Internal Server Error", 500)
+		return
+	}
 }
 
 func showSnippet(writer http.ResponseWriter, request *http.Request) {

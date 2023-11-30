@@ -16,35 +16,35 @@ func (app *application) home(writer http.ResponseWriter, request *http.Request) 
 		return
 	}
 
-	snippets, err := app.snippets.Latest()
+	// snippets, err := app.snippets.Latest()
+	// if err != nil {
+	// 	app.serverError(writer, err)
+	// 	return
+	// }
+
+	// for _, snippet := range snippets {
+	// 	fmt.Fprintf(writer, "%v\n", snippet)
+	// }
+
+	files := []string{
+		"./ui/html/home.page.tmpl",
+		"./ui/html/footer.partial.tmpl",
+		"./ui/html/base.layout.tmpl",
+	}
+
+	ts, err := template.ParseFiles(files...)
+
 	if err != nil {
 		app.serverError(writer, err)
 		return
 	}
 
-	for _, snippet := range snippets {
-		fmt.Fprintf(writer, "%v\n", snippet)
+	err = ts.Execute(writer, nil)
+
+	if err != nil {
+		app.serverError(writer, err)
+		return
 	}
-
-	// files := []string{
-	// 	"./ui/html/home.page.tmpl",
-	// 	"./ui/html/footer.partial.tmpl",
-	// 	"./ui/html/base.layout.tmpl",
-	// }
-
-	// ts, err := template.ParseFiles(files...)
-
-	// if err != nil {
-	// 	app.serverError(writer, err)
-	// 	return
-	// }
-
-	// err = ts.Execute(writer, nil)
-
-	// if err != nil {
-	// 	app.serverError(writer, err)
-	// 	return
-	// }
 }
 
 func (app *application) showSnippet(writer http.ResponseWriter, request *http.Request) {

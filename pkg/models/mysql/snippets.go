@@ -12,7 +12,22 @@ type SnippetModel struct {
 
 // Insert a new snippet to database.
 func (model *SnippetModel) Insert(title string, content string, expires string) (int, error) {
-	return 0, nil
+	statement := `INSERT INTO snippets (title, content, created, expires) 
+	VALUES (?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY))`
+
+	result, err := model.DB.Exec(statement, title, content, expires)
+
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
 }
 
 // Get an snippet based on its id

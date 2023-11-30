@@ -8,12 +8,14 @@ import (
 	"os"
 
 	config "github.com/AliiAhmadi/ShareCode/config"
+	"github.com/AliiAhmadi/ShareCode/pkg/models/mysql"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
+	snippets *mysql.SnippetModel
 }
 
 func main() {
@@ -22,18 +24,24 @@ func main() {
 	flag.IntVar(&config.Port, "port", 4000, "Listen port")
 	flag.StringVar(&config.Address, "addr", "127.0.0.1", "HTTP network address")
 	flag.StringVar(&config.DSN, "dsn", "sharecode:pass@/sharecode?parseTime=true", "Mysql database dsn for connection")
+	flag.Parse()
 
-	app := &application{
-		errorLog: log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
-		infoLog:  log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime),
-	}
+	errLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+
 	db, err := openDB(config.DSN)
 	if err != nil {
-		app.errorLog.Fatal(err)
+		errLog.Fatal(err)
 	}
 	defer db.Close()
 
-	flag.Parse()
+	app := &application{
+		errorLog: errLog,
+		infoLog:  infoLog,
+		snippets: &mysql.SnippetModel{
+			DB: db,
+		},
+	}
 
 	server := &http.Server{
 		Addr:     config.Get(),

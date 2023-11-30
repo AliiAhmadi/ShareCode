@@ -7,6 +7,7 @@ import (
 type Config struct {
 	Port    int
 	Address string
+	DSN     string
 }
 
 func (config *Config) Get() string {

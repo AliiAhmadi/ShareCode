@@ -43,3 +43,12 @@ INSERT INTO snippets (title, content, created, expires) VALUES (
   DATE_ADD(UTC_TIMESTAMP(), INTERVAL 7 DAY)
 );
 ```
+
+## Create database user
+```sql
+CREATE USER 'sharecode'@'localhost';
+GRANT SELECT, INSERT ON sharecode.* TO 'sharecode'@'localhost';
+
+-- Replace 'pass' with your password.
+ALTER USER 'sharecode'@'localhost' IDENTIFIED BY 'pass';
+```

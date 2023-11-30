@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+
+	"github.com/AliiAhmadi/ShareCode/pkg/models"
 )
 
 func (app *application) home(writer http.ResponseWriter, request *http.Request) {
@@ -43,7 +45,17 @@ func (app *application) showSnippet(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	fmt.Fprintf(writer, "Display snippet with ID %d ...", id)
+	snippet, err := app.snippets.Get(id)
+
+	if err == models.ErrorNoRecord {
+		app.notFound(writer)
+		return
+	} else if err != nil {
+		app.serverError(writer, err)
+		return
+	}
+
+	fmt.Fprintf(writer, "%v", snippet)
 }
 
 func (app *application) createSnippet(writer http.ResponseWriter, request *http.Request) {

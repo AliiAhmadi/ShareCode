@@ -16,15 +16,15 @@ func (app *application) home(writer http.ResponseWriter, request *http.Request) 
 		return
 	}
 
-	// snippets, err := app.snippets.Latest()
-	// if err != nil {
-	// 	app.serverError(writer, err)
-	// 	return
-	// }
+	snippets, err := app.snippets.Latest()
+	if err != nil {
+		app.serverError(writer, err)
+		return
+	}
 
-	// for _, snippet := range snippets {
-	// 	fmt.Fprintf(writer, "%v\n", snippet)
-	// }
+	data := &templateData{
+		Snippets: snippets,
+	}
 
 	files := []string{
 		"./ui/html/home.page.tmpl",
@@ -39,7 +39,7 @@ func (app *application) home(writer http.ResponseWriter, request *http.Request) 
 		return
 	}
 
-	err = ts.Execute(writer, nil)
+	err = ts.Execute(writer, data)
 
 	if err != nil {
 		app.serverError(writer, err)

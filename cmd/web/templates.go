@@ -33,7 +33,7 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 		name := filepath.Base(page)
 
 		// Parse the page template file.
-		ts, err := template.ParseFiles(page)
+		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 
 		if err != nil {
 			return nil, err
@@ -61,4 +61,8 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 
 func humanDate(t time.Time) string {
 	return t.Format("02 Jan 2006 at 15:04")
+}
+
+var functions = template.FuncMap{
+	"humanDate": humanDate,
 }

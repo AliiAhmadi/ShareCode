@@ -10,11 +10,6 @@ import (
 
 func (app *application) home(writer http.ResponseWriter, request *http.Request) {
 
-	if request.URL.Path != "/" {
-		app.notFound(writer)
-		return
-	}
-
 	snippets, err := app.snippets.Latest()
 	if err != nil {
 		app.serverError(writer, err)
@@ -27,7 +22,7 @@ func (app *application) home(writer http.ResponseWriter, request *http.Request) 
 }
 
 func (app *application) showSnippet(writer http.ResponseWriter, request *http.Request) {
-	id, err := strconv.Atoi(request.URL.Query().Get("id"))
+	id, err := strconv.Atoi(request.URL.Query().Get(":id"))
 
 	if err != nil || id < 1 {
 		app.notFound(writer)
@@ -51,12 +46,6 @@ func (app *application) showSnippet(writer http.ResponseWriter, request *http.Re
 
 func (app *application) createSnippet(writer http.ResponseWriter, request *http.Request) {
 
-	if request.Method != "POST" {
-		writer.Header().Set("Allow", "POST")
-		app.clientError(writer, http.StatusMethodNotAllowed)
-		return
-	}
-
 	title := "test title"
 	content := "here is content"
 	expires := "3"
@@ -69,5 +58,9 @@ func (app *application) createSnippet(writer http.ResponseWriter, request *http.
 	}
 
 	// Redirect the user to the relavent page for the snippet.
-	http.Redirect(writer, request, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+	http.Redirect(writer, request, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
+}
+
+func (app *application) createSnippetForm(writer http.ResponseWriter, request *http.Request) {
+	writer.Write([]byte("Creating a new snippet ...."))
 }

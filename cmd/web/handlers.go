@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
-	"unicode/utf8"
 
+	"github.com/AliiAhmadi/ShareCode/pkg/forms"
 	"github.com/AliiAhmadi/ShareCode/pkg/models"
 )
 
@@ -54,37 +53,23 @@ func (app *application) createSnippet(writer http.ResponseWriter, request *http.
 		return
 	}
 
-	title := request.PostForm.Get("title")
-	content := request.PostForm.Get("content")
-	expires := request.PostForm.Get("expires")
+	form := forms.New(request.PostForm)
+	form.Required("title", "content", "expires")
+	form.MaxLength("title", 100)
+	form.PermittedValues("expires", "365", "7", "1")
 
-	errors := make(map[string]string)
-
-	if strings.TrimSpace(title) == "" {
-		errors["title"] = "Title can not be empty"
-	} else if utf8.RuneCountInString(title) > 100 {
-		errors["title"] = "Title is too long (maximum character count: 100)"
-	}
-
-	if strings.TrimSpace(content) == "" {
-		errors["content"] = "Content can not be blank"
-	}
-
-	if strings.TrimSpace(expires) == "" {
-		errors["expires"] = "Expires can not be empty"
-	} else if strings.TrimSpace(expires) != "1" && strings.TrimSpace(expires) != "7" && strings.TrimSpace(expires) != "365" {
-		errors["expires"] = "Invalid expires"
-	}
-
-	if len(errors) > 0 {
+	if !form.Valid() {
 		app.render(writer, request, "create.page.tmpl", &templateData{
-			FormErrors: errors,
-			FormData:   request.PostForm,
+			Form: form,
 		})
 		return
 	}
 
-	id, err := app.snippets.Insert(title, content, expires)
+	id, err := app.snippets.Insert(
+		form.Get("title"),
+		form.Get("content"),
+		form.Get("expires"),
+	)
 
 	if err != nil {
 		app.serverError(writer, err)
@@ -96,5 +81,7 @@ func (app *application) createSnippet(writer http.ResponseWriter, request *http.
 }
 
 func (app *application) createSnippetForm(writer http.ResponseWriter, request *http.Request) {
-	app.render(writer, request, "create.page.tmpl", nil)
+	app.render(writer, request, "create.page.tmpl", &templateData{
+		Form: forms.New(nil),
+	})
 }

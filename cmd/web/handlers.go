@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
+	"unicode/utf8"
 
 	"github.com/AliiAhmadi/ShareCode/pkg/models"
 )
@@ -52,11 +54,34 @@ func (app *application) createSnippet(writer http.ResponseWriter, request *http.
 		return
 	}
 
-	id, err := app.snippets.Insert(
-		request.PostForm.Get("title"),
-		request.PostForm.Get("content"),
-		request.PostForm.Get("expires"),
-	)
+	title := request.PostForm.Get("title")
+	content := request.PostForm.Get("content")
+	expires := request.PostForm.Get("expires")
+
+	errors := make(map[string]string)
+
+	if strings.TrimSpace(title) == "" {
+		errors["title"] = "title can not be empty"
+	} else if utf8.RuneCountInString(title) > 100 {
+		errors["title"] = "title is too long (maximum character count: 100)"
+	}
+
+	if strings.TrimSpace(content) == "" {
+		errors["content"] = "content can not be blank"
+	}
+
+	if strings.TrimSpace(expires) == "" {
+		errors["expires"] = "expires can not be empty"
+	} else if strings.TrimSpace(expires) != "1" && strings.TrimSpace(expires) != "7" && strings.TrimSpace(expires) != "365" {
+		errors["expires"] = "invalid expires"
+	}
+
+	if len(errors) > 0 {
+		fmt.Fprint(writer, errors)
+		return
+	}
+
+	id, err := app.snippets.Insert(title, content, expires)
 
 	if err != nil {
 		app.serverError(writer, err)

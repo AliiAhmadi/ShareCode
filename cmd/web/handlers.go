@@ -61,23 +61,26 @@ func (app *application) createSnippet(writer http.ResponseWriter, request *http.
 	errors := make(map[string]string)
 
 	if strings.TrimSpace(title) == "" {
-		errors["title"] = "title can not be empty"
+		errors["title"] = "Title can not be empty"
 	} else if utf8.RuneCountInString(title) > 100 {
-		errors["title"] = "title is too long (maximum character count: 100)"
+		errors["title"] = "Title is too long (maximum character count: 100)"
 	}
 
 	if strings.TrimSpace(content) == "" {
-		errors["content"] = "content can not be blank"
+		errors["content"] = "Content can not be blank"
 	}
 
 	if strings.TrimSpace(expires) == "" {
-		errors["expires"] = "expires can not be empty"
+		errors["expires"] = "Expires can not be empty"
 	} else if strings.TrimSpace(expires) != "1" && strings.TrimSpace(expires) != "7" && strings.TrimSpace(expires) != "365" {
-		errors["expires"] = "invalid expires"
+		errors["expires"] = "Invalid expires"
 	}
 
 	if len(errors) > 0 {
-		fmt.Fprint(writer, errors)
+		app.render(writer, request, "create.page.tmpl", &templateData{
+			FormErrors: errors,
+			FormData:   request.PostForm,
+		})
 		return
 	}
 

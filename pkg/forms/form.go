@@ -37,4 +37,18 @@ func (form *Form) MaxLength(field string, length int) {
 	}
 }
 
-// func (form *Form)
+func (form *Form) PermittedValues(field string, opts ...string) {
+	value := form.Get(field)
+
+	if value == "" {
+		return
+	}
+
+	for _, opt := range opts {
+		if value == opt {
+			return
+		}
+	}
+
+	form.Errors.Add(field, "This field is invalid")
+}

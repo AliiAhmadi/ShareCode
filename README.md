@@ -1,5 +1,14 @@
 # ShareCode
-An simple platform for sharing code
+
+Routes preview:
+
+| Method | Pattern         | Action                 |
+|--------|-----------------|------------------------|
+| GET    | /               | Home page              |
+| GET    | /snippet/:id    | Get a specific snippet |
+| GET    | /snippet/create | Get new snippet form   |
+| GET    | /snippet/create | Create new snippet     |
+| POST   | /static/        | Serve static files     |
 
 ## Setup database
 ```sql

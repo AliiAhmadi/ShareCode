@@ -7,10 +7,12 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	config "github.com/AliiAhmadi/ShareCode/config"
 	"github.com/AliiAhmadi/ShareCode/pkg/models/mysql"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/golangcollege/sessions"
 )
 
 type application struct {
@@ -18,6 +20,7 @@ type application struct {
 	infoLog       *log.Logger
 	snippets      *mysql.SnippetModel
 	templateCache map[string]*template.Template
+	session       *sessions.Session
 }
 
 func main() {
@@ -26,6 +29,7 @@ func main() {
 	flag.IntVar(&config.Port, "port", 4000, "Listen port")
 	flag.StringVar(&config.Address, "addr", "127.0.0.1", "HTTP network address")
 	flag.StringVar(&config.DSN, "dsn", "sharecode:pass@/sharecode?parseTime=true", "Mysql database dsn for connection")
+	flag.StringVar(&config.Secret, "secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret key of your application")
 	flag.Parse()
 
 	errLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
@@ -43,6 +47,9 @@ func main() {
 		errLog.Fatal(err)
 	}
 
+	session := sessions.New([]byte(config.Secret))
+	session.Lifetime = time.Hour * 12
+
 	app := &application{
 		errorLog: errLog,
 		infoLog:  infoLog,
@@ -50,6 +57,7 @@ func main() {
 			DB: db,
 		},
 		templateCache: templateCache,
+		session:       session,
 	}
 
 	server := &http.Server{

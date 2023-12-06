@@ -95,7 +95,29 @@ func (app *application) signupUserForm(writer http.ResponseWriter, request *http
 }
 
 func (app *application) signupUser(writer http.ResponseWriter, request *http.Request) {
+	err := request.ParseForm()
+	if err != nil {
+		app.clientError(writer, http.StatusBadRequest)
+	}
 
+	form := forms.New(request.PostForm)
+	form.Required("name", "email", "password")
+	form.MatchesPattern("email", forms.EmailRX)
+	form.MinLength("password", 10)
+
+	if !form.Valid() {
+		app.render(
+			writer,
+			request,
+			"signup.page.tmpl",
+			&templateData{
+				Form: form,
+			},
+		)
+		return
+	}
+
+	fmt.Fprintln(writer, "at this point every things is ok")
 }
 
 func (app *application) loginUserForm(writer http.ResponseWriter, request *http.Request) {

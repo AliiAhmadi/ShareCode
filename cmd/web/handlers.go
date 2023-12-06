@@ -145,7 +145,30 @@ func (app *application) loginUserForm(writer http.ResponseWriter, request *http.
 }
 
 func (app *application) loginUser(writer http.ResponseWriter, request *http.Request) {
+	err := request.ParseForm()
+	if err != nil {
+		app.clientError(writer, http.StatusBadRequest)
+		return
+	}
 
+	form := forms.New(request.PostForm)
+	id, err := app.users.Authenticate(
+		form.Get("email"),
+		form.Get("password"),
+	)
+	if err == models.ErrInvalidCredentials {
+		form.Errors.Add("generic", "Email of Password is incorrect")
+		app.render(writer, request, "login.page.tmpl", &templateData{
+			Form: form,
+		})
+		return
+	} else if err != nil {
+		app.serverError(writer, err)
+		return
+	}
+
+	app.session.Put(request, "userID", id)
+	http.Redirect(writer, request, "/snippet/create", http.StatusSeeOther)
 }
 
 func (app *application) logoutUser(writer http.ResponseWriter, request *http.Request) {

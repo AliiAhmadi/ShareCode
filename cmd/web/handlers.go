@@ -139,7 +139,9 @@ func (app *application) signupUser(writer http.ResponseWriter, request *http.Req
 }
 
 func (app *application) loginUserForm(writer http.ResponseWriter, request *http.Request) {
-
+	app.render(writer, request, "login.page.tmpl", &templateData{
+		Form: forms.New(nil),
+	})
 }
 
 func (app *application) loginUser(writer http.ResponseWriter, request *http.Request) {

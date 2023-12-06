@@ -9,6 +9,11 @@ Routes preview:
 | GET    | /snippet/create | Get new snippet form   |
 | GET    | /snippet/create | Create new snippet     |
 | POST   | /static/        | Serve static files     |
+| GET    | /user/signup    | Display signup form    |
+| POST   | /user/signup    | Create new user        |
+| GET    | /user/login     | Display login form     |
+| POST   | /user/login     | Login the user         |
+| POST   | /user/logout    | Logout the user        |
 
 ## Setup database
 ```sql

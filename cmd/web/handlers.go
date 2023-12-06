@@ -172,5 +172,7 @@ func (app *application) loginUser(writer http.ResponseWriter, request *http.Requ
 }
 
 func (app *application) logoutUser(writer http.ResponseWriter, request *http.Request) {
-
+	app.session.Remove(request, "userID")
+	app.session.Put(request, "flash", "You've been logged out successfully!")
+	http.Redirect(writer, request, "/", http.StatusSeeOther)
 }

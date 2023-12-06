@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/justinas/nosurf"
 )
 
 var Middlewares = []func(http.Handler) http.Handler{}
@@ -46,4 +48,14 @@ func (app *application) requiredAuthenticatedUser(next http.Handler) http.Handle
 		}
 		next.ServeHTTP(writer, request)
 	})
+}
+
+func noSurf(next http.Handler) http.Handler {
+	csrfHandler := nosurf.New(next)
+	csrfHandler.SetBaseCookie(http.Cookie{
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   true,
+	})
+	return csrfHandler
 }

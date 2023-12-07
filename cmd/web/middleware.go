@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
+	"github.com/AliiAhmadi/ShareCode/pkg/models"
 	"github.com/justinas/nosurf"
 )
 
@@ -58,4 +60,27 @@ func noSurf(next http.Handler) http.Handler {
 		Secure:   true,
 	})
 	return csrfHandler
+}
+
+func (app *application) authenticate(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		exists := app.session.Exists(request, "userID")
+		if !exists {
+			next.ServeHTTP(writer, request)
+			return
+		}
+
+		user, err := app.users.Get(app.session.GetInt(request, "userID"))
+		if err == models.ErrorNoRecord {
+			app.session.Remove(request, "userID")
+			next.ServeHTTP(writer, request)
+			return
+		} else if err != nil {
+			app.serverError(writer, err)
+			return
+		}
+
+		ctx := context.WithValue(request.Context(), contextKeyUser, user)
+		next.ServeHTTP(writer, request.WithContext(ctx))
+	})
 }

@@ -63,3 +63,7 @@ func (app *application) authenticatedUser(request *http.Request) *models.User {
 	}
 	return user
 }
+
+func ping(writer http.ResponseWriter, _ *http.Request) {
+	writer.Write([]byte("OK"))
+}

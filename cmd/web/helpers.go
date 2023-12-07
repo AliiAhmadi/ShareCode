@@ -50,7 +50,7 @@ func (app *application) addDefaultData(td *templateData, request *http.Request) 
 	}
 
 	td.CSRFToken = nosurf.Token(request)
-	// td.AuthenticatedUser = app.authenticatedUser(request)
+	td.AuthenticatedUser = app.authenticatedUser(request)
 	td.Flash = app.session.PopString(request, "flash")
 	td.CurrentYear = time.Now().Year()
 	return td

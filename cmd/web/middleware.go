@@ -44,7 +44,7 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 
 func (app *application) requiredAuthenticatedUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-		if app.authenticatedUser(request) == 0 {
+		if app.authenticatedUser(request) == nil {
 			http.Redirect(writer, request, "/user/login", http.StatusSeeOther)
 			return
 		}

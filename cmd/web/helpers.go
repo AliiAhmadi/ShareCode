@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/AliiAhmadi/ShareCode/pkg/models"
 	"github.com/justinas/nosurf"
 )
 
@@ -49,12 +50,16 @@ func (app *application) addDefaultData(td *templateData, request *http.Request) 
 	}
 
 	td.CSRFToken = nosurf.Token(request)
-	td.AuthenticatedUser = app.authenticatedUser(request)
+	// td.AuthenticatedUser = app.authenticatedUser(request)
 	td.Flash = app.session.PopString(request, "flash")
 	td.CurrentYear = time.Now().Year()
 	return td
 }
 
-func (app *application) authenticatedUser(request *http.Request) int {
-	return app.session.GetInt(request, "userID")
+func (app *application) authenticatedUser(request *http.Request) *models.User {
+	user, ok := request.Context().Value(contextKeyUser).(*models.User)
+	if !ok {
+		return nil
+	}
+	return user
 }

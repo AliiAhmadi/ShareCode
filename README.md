@@ -103,7 +103,7 @@ CREATE TABLE users (
 ALTER TABLE users ADD CONSTRAINT users_uc_email UNIQUE (email);
 ```
 
-## Create database user
+## Database user
 ```sql
 CREATE USER 'sharecode'@'localhost';
 GRANT SELECT, INSERT ON sharecode.* TO 'sharecode'@'localhost';

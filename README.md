@@ -1,6 +1,34 @@
 # ShareCode
 
-Routes preview:
+![Screenshot_20231209_054535](https://github.com/AliiAhmadi/ShareCode/assets/107758775/b91e667a-e777-4d2b-9bb9-98186dedbf0e)
+
+## Setup
+
+```bash
+# Clone source code
+$ git clone https://github.com/AliiAhmadi/ShareCode.git
+
+# Create mysql database and table and also a user for database connection(Go to `Database` section)
+
+#
+$ cd ShareCode/
+
+# Make a directory for self signed ssl certification and private key
+$ mkdir tls
+
+#
+$ cd tls/
+
+# Make ssl certification and private key
+$ go run /usr/local/go/src/crypto/tls/generate_cert.go --rsa-bits=2048 --host=localhost
+
+#
+$ shopt -s extglob
+
+# 
+```
+
+## Routes
 
 | Method | Pattern         | Action                 |
 |--------|-----------------|------------------------|
@@ -15,7 +43,7 @@ Routes preview:
 | POST   | /user/login     | Login the user         |
 | POST   | /user/logout    | Logout the user        |
 
-## Setup database
+## Database
 ```sql
 -- Create a new database.
 CREATE DATABASE sharecode;

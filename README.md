@@ -22,10 +22,17 @@ $ cd tls/
 # Make ssl certification and private key
 $ go run /usr/local/go/src/crypto/tls/generate_cert.go --rsa-bits=2048 --host=localhost
 
+# Back to the root of project
+$ cd ..
+
 #
 $ shopt -s extglob
 
-# 
+# Run unit tests
+$ go test ./...
+
+# Run application
+$ go run ./cmd/web/!(*_test).go
 ```
 
 ## Routes

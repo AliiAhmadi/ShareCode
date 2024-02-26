@@ -111,3 +111,6 @@ GRANT SELECT, INSERT ON sharecode.* TO 'sharecode'@'localhost';
 -- Replace 'pass' with your password.
 ALTER USER 'sharecode'@'localhost' IDENTIFIED BY 'pass';
 ```
+
+## Author
+Ali Ahmadi
